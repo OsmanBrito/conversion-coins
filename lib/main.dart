@@ -1,10 +1,10 @@
 import 'package:coin_conversion/locator.dart';
-import 'package:coin_conversion/ui/screens/convertion_view.dart';
+import 'package:coin_conversion/ui/screens/convestion_view.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  setupLocator();
+void main() async{
   runApp(MyApp());
+  await setupLocator();
 }
 
 class MyApp extends StatelessWidget {

@@ -1,11 +1,11 @@
 import 'package:coin_conversion/core/enums/viewstate.dart';
 import 'package:coin_conversion/core/models/currencies.dart';
-import 'package:coin_conversion/core/services/api.dart';
+import 'package:coin_conversion/core/services/api_service.dart';
 import 'package:coin_conversion/core/viewmodels/base_model.dart';
 import 'package:coin_conversion/locator.dart';
 
 class ListCurrenciesModel extends BaseModel {
-  Api _api = sl<Api>();
+  ApiService _api = sl<ApiService>();
 
   List<Currencies> currencies;
 

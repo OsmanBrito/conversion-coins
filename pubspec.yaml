@@ -31,6 +31,10 @@ dependencies:
   provider: ^4.3.3
   dio: ^3.0.10
   get_it: ^5.0.4
+  searchable_dropdown: ^1.1.3
+  shared_preferences: ^0.5.10
+  intl: ^0.16.1
+
   coins_flags:
     path: ../coins_flags
 

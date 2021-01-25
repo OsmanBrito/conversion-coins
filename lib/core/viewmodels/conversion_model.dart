@@ -1,33 +1,38 @@
 import 'package:coin_conversion/core/enums/viewstate.dart';
 import 'package:coin_conversion/core/models/quotes.dart';
-import 'package:coin_conversion/core/services/api.dart';
+import 'package:coin_conversion/core/services/api_service.dart';
 import 'package:coin_conversion/core/viewmodels/base_model.dart';
 import 'package:coin_conversion/locator.dart';
 
 class ConversionModel extends BaseModel {
-  Api _api = sl<Api>();
+  ApiService _api = sl<ApiService>();
 
   List<Quotes> liveQuotes;
   String conversionResult;
-  String firstFieldValue = 'USD';
-  String secondFieldValue = 'EUR';
+  String timestamp = "";
+  String targetCurrencyFieldValue = 'USD';
+  String desiredCurrencyFieldValue = 'EUR';
 
   Future fetchLiveQuotes() async {
-    setState(ViewState.Busy);
-    liveQuotes = await _api.liveQuotes();
-    conversionResult = liveQuotes
-        .firstWhere((element) => element.initial.contains('EUR'))
-        .value
-        .toString();
-    setState(ViewState.Idle);
+    try{
+      setState(ViewState.Busy);
+      liveQuotes = await _api.liveQuotes();
+      conversionResult = liveQuotes
+          .firstWhere((element) => element.initials.contains('EUR'))
+          .value
+          .toStringAsFixed(2);
+      timestamp = _api.getTimestamp();
+      setState(ViewState.Idle);
+    } catch(_){
+      setState(ViewState.Failure);
+    }
   }
 
-  changeValue(String dropDownValue, bool isFirstField,
-      String inputValue) {
+  changeValue(String dropDownValue, bool isFirstField, String inputValue) {
     if (isFirstField) {
-      firstFieldValue = dropDownValue;
+      targetCurrencyFieldValue = dropDownValue;
     } else {
-      secondFieldValue = dropDownValue;
+      desiredCurrencyFieldValue = dropDownValue;
     }
     updateConversion(inputValue);
     notifyListeners();
@@ -35,18 +40,25 @@ class ConversionModel extends BaseModel {
 
   updateConversion(String inputValue) {
     Quotes quote;
-    if (!firstFieldValue.contains('USD')) {
-      quote = liveQuotes.firstWhere(
-          (element) => element.initial.contains('USD$firstFieldValue'));
-      num currencyToDollar = num.parse(inputValue) / quote.value;
-      quote = liveQuotes.firstWhere(
-          (element) => element.initial.contains('USD$secondFieldValue'));
-      conversionResult = (currencyToDollar * quote.value).toString();
-    } else {
+    if (!targetCurrencyFieldValue.contains('USD')) {
       quote = liveQuotes.firstWhere((element) =>
-          element.initial.contains('$firstFieldValue$secondFieldValue'));
-      conversionResult = (num.parse(inputValue) * quote.value).toString();
+          element.initials.contains('USD$targetCurrencyFieldValue'));
+      num currencyToDollar = num.parse(inputValue) / quote.value;
+      quote = liveQuotes.firstWhere((element) =>
+          element.initials.contains('USD$desiredCurrencyFieldValue'));
+      conversionResult = (currencyToDollar * quote.value).toStringAsFixed(2);
+    } else {
+      quote = liveQuotes.firstWhere((element) => element.initials
+          .contains('$targetCurrencyFieldValue$desiredCurrencyFieldValue'));
+      conversionResult = (num.parse(inputValue) * quote.value).toStringAsFixed(2);
     }
     notifyListeners();
+  }
+
+  changeChoices(String inputValue) {
+    var aux = targetCurrencyFieldValue;
+    targetCurrencyFieldValue = desiredCurrencyFieldValue;
+    desiredCurrencyFieldValue = aux;
+    updateConversion(inputValue);
   }
 }
