@@ -36,7 +36,8 @@ dependencies:
   intl: ^0.16.1
 
   coins_flags:
-    path: ../coins_flags
+    git:
+      url: https://github.com/OsmanBrito/coins_flag.git
 
 dev_dependencies:
   flutter_test:

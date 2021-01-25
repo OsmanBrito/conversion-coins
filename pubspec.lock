@@ -39,9 +39,11 @@ packages:
   coins_flags:
     dependency: "direct main"
     description:
-      path: "../coins_flags"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "042fac4dbc7f0233d5e720aa7e1b56b26682e314"
+      url: "https://github.com/OsmanBrito/coins_flag.git"
+    source: git
     version: "0.0.1"
   collection:
     dependency: transitive
